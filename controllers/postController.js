@@ -1,8 +1,29 @@
 const Post = require("../models/postModel");
 const catchAsync = require("../utils/catchAsync");
 const CustomError = require("../utils/customError");
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+const multer = require("multer");
+
 exports.createPost = catchAsync(async (req, res, next) => {
-  const newPost = await Post.create(req.body);
+  const uploadResponse = await cloudinary.uploader.upload(req.file.path, {
+    public_id: req.file.filename.split(".")[0],
+  });
+
+  fs.unlinkSync(req.file.path);
+  const data = {
+    title: req.body.title,
+    content: req.body.content,
+    img: uploadResponse.secure_url,
+  };
+  const newPost = await Post.create(data);
   res.status(201).json({
     status: "success",
     data: newPost,
@@ -11,6 +32,7 @@ exports.createPost = catchAsync(async (req, res, next) => {
 
 exports.getPosts = catchAsync(async (req, res, next) => {
   const posts = await Post.find();
+
   res.status(200).json({
     status: "success",
     data: posts,
@@ -37,3 +59,20 @@ exports.deletePost = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/img/posts");
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split("/")[1];
+    cb(null, `${Date.now()}.${ext}`);
+  },
+});
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) cb(null, true);
+  else cb(new CustomError("Not an image!, please upload an image", 400), false);
+};
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+
+exports.uploadPostImg = upload.single("img");
