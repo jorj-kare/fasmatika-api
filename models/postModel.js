@@ -10,8 +10,7 @@ const postSchema = new mongoose.Schema({
     required: [true, "You need to provide content"],
   },
   img: {
-    type: Buffer,
-    contentType: String,
+    type: String,
   },
   author: {
     type: mongoose.Schema.ObjectId,
