@@ -31,10 +31,13 @@ const userSchema = new mongoose.Schema({
       },
       message: "Passwords are not the same",
     },
-    profileImg: {
-      type: Buffer,
-      contentType: String,
-    },
+  },
+  profileImg: {
+    type: String,
+  },
+  posts: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Post",
   },
 });
 const User = new mongoose.model("User", userSchema);
