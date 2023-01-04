@@ -2,13 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
-
+const hpp = require("hpp");
 const app = express();
 const postRouter = require("./routes/postRoutes");
 const userRouter = require("./routes/userRoutes");
 
 // app.use(cors());
 app.use(helmet());
+app.use(
+  hpp({
+    whitelist: [],
+  })
+);
 // const scriptSrcUrls = [];
 // const styleSrcUrls = [];
 // const connectSrcUrls = [];
