@@ -7,8 +7,8 @@ const app = express();
 const postRouter = require("./routes/postRoutes");
 const userRouter = require("./routes/userRoutes");
 
-// app.use(cors());
-app.use(helmet());
+app.use(cors());
+// app.use(helmet());
 app.use(
   hpp({
     whitelist: [],
