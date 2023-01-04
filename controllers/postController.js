@@ -1,23 +1,11 @@
 const Post = require("../models/postModel");
 const catchAsync = require("../utils/catchAsync");
 const CustomError = require("../utils/customError");
-const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
-
+const uploadImage = require("../utils/uploadImage");
 const multer = require("multer");
 
 exports.createPost = catchAsync(async (req, res, next) => {
-  const uploadResponse = await cloudinary.uploader.upload(req.file.path, {
-    public_id: req.file.filename.split(".")[0],
-  });
-
-  fs.unlinkSync(req.file.path);
+  const uploadResponse = await uploadImage(req);
   const data = {
     title: req.body.title,
     content: req.body.content,
