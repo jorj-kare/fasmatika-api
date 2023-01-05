@@ -7,18 +7,39 @@ const app = express();
 const postRouter = require("./routes/postRoutes");
 const userRouter = require("./routes/userRoutes");
 
-app.use(cors());
+app.use(cookieParser());
+app.use(express.json());
+// app.use(cors());
 // app.use(helmet());
-app.use(
-  hpp({
-    whitelist: [],
-  })
-);
-// const scriptSrcUrls = [];
-// const styleSrcUrls = [];
-// const connectSrcUrls = [];
-// const fontSrcUrls = [];
-// const imgSource = [];
+// app.use(
+//   hpp({
+//     whitelist: [],
+//   })
+// );
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  // res.header(
+  //   "Access-Control-Allow-Headers",
+  //   "Origin, X-Requested-With, Content-Type, Accept"
+
+  // );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization,X-Auth-Token"
+  );
+  res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
+// const scriptSrcUrls = ["https://fasmatika.netlify.app/login"];
+// const styleSrcUrls = ["https://fasmatika.netlify.app/login"];
+// const connectSrcUrls = ["https://fasmatika.netlify.app/login"];
+// const fontSrcUrls = ["https://fasmatika.netlify.app/login"];
+// const imgSource = ["https://fasmatika.netlify.app/login"];
 
 // app.use(
 //   helmet.contentSecurityPolicy({
@@ -33,9 +54,7 @@ app.use(
 //       fontSrc: ["'self'", ...fontSrcUrls],
 //     },
 //   })
-// );https://github.com/sutin1234/sveltekit-mongodb/blob/main/src/lib/counter/counter.spec.tsrail
-app.use(express.json());
-app.use(cookieParser());
+// );
 app.use("/api/v1/posts", postRouter);
 app.use("/api/v1/user", userRouter);
 

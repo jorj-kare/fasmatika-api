@@ -15,6 +15,8 @@ const createToken = (user, res) => {
   const cookiesOptions = {
     expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     httpOnly: true,
+    sameSite: "none",
+    secure: true,
   };
 
   if (process.env.NODE_ENV === "production") cookiesOptions.secure = true;
