@@ -62,12 +62,9 @@ exports.login = catchAsync(async (req, res, next) => {
 
 exports.restrict = catchAsync(async (req, res, next) => {
   let token;
-  console.log(req.cookies.jwt);
   if (req.headers.authorization && req.headers.startWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
   } else if (req.cookies.jwt) {
-    console.log(Date.now());
-
     token = req.cookies.jwt;
   }
   if (!token) {
@@ -76,11 +73,11 @@ exports.restrict = catchAsync(async (req, res, next) => {
     );
   }
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  const user = await User.findById(decoded);
+
+  const user = await User.findById(decoded.id);
   if (!user)
     return next(new CustomError("Invalid token please try again", 400));
   req.user = user;
-  console.log(user);
 
   next();
 });
